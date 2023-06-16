@@ -23,7 +23,7 @@ const getAllUsers: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Signed up Successfully!",
+    message: "Users Retrived Successfully!",
     data: result,
   });
 });
@@ -35,7 +35,7 @@ const getUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Signed up Successfully!",
+    message: "User Retrived Successfully!",
     data: result,
   });
 });
@@ -48,7 +48,7 @@ const updateUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Signed up Successfully!",
+    message: "User Updated Successfully!",
     data: result,
   });
 });
@@ -60,7 +60,7 @@ const deleteUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Signed up Successfully!",
+    message: "User Deleted Successfully!",
     data: result,
   });
 });

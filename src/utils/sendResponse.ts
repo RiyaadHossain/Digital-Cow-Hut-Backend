@@ -8,7 +8,7 @@ const sendResponse = <T>(res: Response, responseData: IAPIResponse<T>) => {
     message: responseData.message,
     data: responseData.data,
   };
-  res.send(responseData.statusCode).json(response);
+  res.status(responseData.statusCode).json(response);
 };
 
 export default sendResponse;
