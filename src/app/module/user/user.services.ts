@@ -1,3 +1,4 @@
+import { USER_ENUM } from "../../../enum/common";
 import paginationHelper from "../../../helpers/paginationHelper";
 import { APIError } from "../../../interface/APIError";
 import { IPagination } from "../../../interface/Pagination";
@@ -9,7 +10,7 @@ import isUserFound from "./user.utils";
 
 const signup = async (payload: IUser): Promise<IUser | null> => {
   // Business Logic: Buyer -> budgaet < 20k
-  if (payload.role == "buyer") {
+  if (payload.role == USER_ENUM.BUYER) {
     if (!payload.budget) throw new APIError(400, "Budget is Required!");
     if (payload.budget < 20000) {
       throw new APIError(400, "Budget should be at least more than 20000!");
@@ -17,7 +18,7 @@ const signup = async (payload: IUser): Promise<IUser | null> => {
   }
 
   // Business Logic: Seller -> income
-  if (payload.role == "seller") payload.income = 0;
+  if (payload.role == USER_ENUM.SELLER) payload.income = 0;
 
   const data = await User.create(payload);
   return data;
