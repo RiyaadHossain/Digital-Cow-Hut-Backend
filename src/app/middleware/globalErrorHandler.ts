@@ -18,7 +18,10 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     message = simplifiedError.message;
     errorMessage = simplifiedError.errorMessage;
   } else if (error.name == "CastError") {
-    const simplifiedError = handleCastError(error); // Handle cast error
+    const simplifiedError = handleCastError(error);
+    statusCode = simplifiedError.status;
+    message = simplifiedError.message;
+    errorMessage = simplifiedError.errorMessage;
   } else if (error instanceof ZodError) {
     const simplifiedError = handleZodError(error);
     statusCode = simplifiedError.status;

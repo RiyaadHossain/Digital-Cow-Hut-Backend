@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Document, Model } from "mongoose";
 
 type Name = {
   firstName: string;
@@ -7,7 +7,7 @@ type Name = {
 
 type Role = "seller" | "buyer";
 
-export type IUser = {
+export interface IUser extends Document {
   name: Name;
   role: Role;
   password: string;
@@ -15,6 +15,14 @@ export type IUser = {
   address: string;
   budget?: number;
   income?: number;
-};
+}
 
 export type UserModel = Model<IUser, Record<string, unknown>>;
+
+export type IUserSearchFilter = {
+  searchTerm?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: Role;
+  address?: string;
+};

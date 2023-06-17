@@ -4,6 +4,9 @@ import { UserService } from "./user.services";
 import { IUser } from "./user.interface";
 import sendResponse from "../../../utils/sendResponse";
 import httpStatus from "http-status";
+import pick from "../../../utils/pick";
+import { paginationFields } from "../../../constant/paginationFields";
+import { userSearchFilterOptions } from "./user.constant";
 
 const signup: RequestHandler = catchAsync(async (req, res, next) => {
   const userData = req.body;
@@ -18,13 +21,16 @@ const signup: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 const getAllUsers: RequestHandler = catchAsync(async (req, res, next) => {
-  const result = await UserService.getAllUsers();
+  const paginationOptions = pick(req.query, paginationFields);
+  const searchFilterFields = pick(req.query, userSearchFilterOptions);
+  const result = await UserService.getAllUsers(paginationOptions, searchFilterFields);
 
   sendResponse<IUser[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Users Retrived Successfully!",
-    data: result,
+    message: "Users data Retrived Successfully!",
+    meta: result?.meta,
+    data: result?.data,
   });
 });
 
@@ -35,7 +41,7 @@ const getUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Retrived Successfully!",
+    message: "User data Retrived Successfully!",
     data: result,
   });
 });
@@ -48,7 +54,7 @@ const updateUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Updated Successfully!",
+    message: "User data Updated Successfully!",
     data: result,
   });
 });
@@ -60,7 +66,7 @@ const deleteUser: RequestHandler = catchAsync(async (req, res, next) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User Deleted Successfully!",
+    message: "User data Deleted Successfully!",
     data: result,
   });
 });
