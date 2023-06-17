@@ -31,7 +31,7 @@ const cowSchema = new Schema<ICow>({
     required: true,
     trim: true,
   },
-  seller: { type: Schema.Types.ObjectId, required: true },
+  seller: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Cow = model<ICow, CowModel>("Cow", cowSchema);

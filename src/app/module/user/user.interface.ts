@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Document, Model, ObjectId } from "mongoose";
 
 type Name = {
   firstName: string;
@@ -8,6 +8,7 @@ type Name = {
 type Role = "seller" | "buyer";
 
 export interface IUser extends Document {
+  _id: ObjectId
   name: Name;
   role: Role;
   password: string;
