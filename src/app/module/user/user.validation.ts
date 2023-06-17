@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { userRole } from "./user.constant";
+import { IUser } from "./user.interface";
 
 const signupZodSchema = z.object({
   body: z.object({
-    name: z
-      .object({
-        firstName: z.string(),
-        lastName: z.string(),
-      }),
+    name: z.object({
+      firstName: z.string(),
+      lastName: z.string(),
+    }),
     role: z.enum([...userRole] as [string, ...string[]], {
       required_error: "Role is required",
     }),
