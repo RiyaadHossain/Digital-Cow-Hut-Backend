@@ -27,7 +27,7 @@ const getAllCows = async (
   // Sort Condition
   const sortCondition = { [sortBy]: sortOrder };
 
-  const { searchTerm, ...filterdata } = searchFilterFields;
+  const { searchTerm, minPrice, maxPrice, ...filterdata } = searchFilterFields;
   const andCondition = [];
 
   // Search Condition
@@ -46,6 +46,14 @@ const getAllCows = async (
         [field]: [value],
       })),
     });
+  }
+
+  if (minPrice) {
+    andCondition.push({ price: { $gte: minPrice } });
+  }
+
+  if (maxPrice) {
+    andCondition.push({ price: { $lte: maxPrice } });
   }
 
   const whereCondition = andCondition.length ? { $and: andCondition } : {};

@@ -28,6 +28,8 @@ export const cowSearchFilterOptions = [
   "name",
   "breed",
   "location",
+  "minPrice",
+  "maxPrice",
   "category",
   "label",
 ];

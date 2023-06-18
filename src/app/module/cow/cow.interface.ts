@@ -45,4 +45,6 @@ export type ICowSearchFilter = {
   location?: string;
   category?: string;
   label?: string;
+  minPrice?: number;
+  maxPrice?: number;
 };
