@@ -11,11 +11,11 @@ Welcome to the `Digital Cow Hut` API Documentation! This guide will provide you 
 5. [Error Handling](#error-handling)
 6. [Conclusion](#conclusion)
 
-## 1. Introduction
+## Introduction
 
 The `Digital Cow Hut` API provides access to various resources and functionalities. It allows client-side developers to interact with our system programmatically and retrieve, create, update, and delete data. This documentation will guide you on how to make requests, handle responses, and understand the available endpoints.
 
-## 2. Endpoints
+## Endpoints
 
 The `Digital Cow Hut` API provides the following endpoints:
 
@@ -41,7 +41,7 @@ The `Digital Cow Hut` API provides the following endpoints:
 - `GET /orders/{id}`: Retrieve details of a specific order.
 - `POST /orders`: Create a new order.
 
-## 3. Request Format
+## Request Format
 
 ### Request Headers
 
@@ -53,7 +53,7 @@ Include the following headers in your API requests:
 
 Most endpoints require a request body in JSON format. Refer to the specific endpoint documentation for the required fields and their formats.
 
-## 4. Response Format
+## Response Format
 
 ### Response Codes
 
@@ -81,7 +81,7 @@ Example error response:
 }
 ```
 
-## 5. Error Handling
+## Error Handling
 
 In case of an error, the API will return a JSON response with an error message and an appropriate status code. The response body will contain an `error` field indicating the error type or message.
 
@@ -101,7 +101,7 @@ Example error response:
 }
 ```
 
-## 6. Conclusion
+## Conclusion
 
 Congratulations! You have reached the end of the `Digital Cow Hut` API Documentation. You should now have a good understanding of how to authenticate, make requests, handle responses, and work with the available endpoints. If you have any further questions or need assistance, please contact our support team.
 
