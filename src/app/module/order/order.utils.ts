@@ -13,8 +13,6 @@ export const isCowFound = async (
   id: Schema.Types.ObjectId
 ): Promise<boolean> => {
   const cow = await Cow.findById(id);
-  console.log(id)
-  console.log(cow)
   return !!cow;
 };
 

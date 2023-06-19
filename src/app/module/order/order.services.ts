@@ -6,11 +6,10 @@ import { IAllDataReturnType } from "../../../interface/common";
 import { IOrder } from "./order.interface";
 import Order from "./order.model";
 import { isOrderFound } from "./order.utils";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import Cow from "../cow/cow.model";
 import User from "../user/user.model";
 import { USER_ENUM } from "../../../enum/common";
-import { IUser } from "../user/user.interface";
 
 const createOrder = async (payload: IOrder): Promise<IOrder | null> => {
   const cowId = payload.cow;
@@ -34,7 +33,7 @@ const createOrder = async (payload: IOrder): Promise<IOrder | null> => {
   if (cowPrice > buyerBudget)
     throw new APIError(
       httpStatus.BAD_REQUEST,
-      "Buyer don't have enough budget to buy this cow!"
+      `Buyer don't have enough budget to buy ${cow.name}!`
     );
 
   let orderData;
@@ -43,32 +42,32 @@ const createOrder = async (payload: IOrder): Promise<IOrder | null> => {
   try {
     session.startTransaction();
 
-    // 1. Create the Order
-    const data = await Order.create([payload], { session });
-    orderData = data[0];
-
-    // 2. Decrease Buyer Budget
+    // 1. Decrease Buyer Budget
     buyerBudget = buyerBudget - cowPrice;
-    console.log(buyerBudget);
     await User.findOneAndUpdate(
       { _id: buyer, role: USER_ENUM.BUYER },
-      { budget: buyerBudget }
+      { budget: buyerBudget },
+      { session }
     );
 
-    // 3. Increase Seller Incode
+    // 2. Increase Seller Incode
     const sellerId = cow?.seller?._id;
     await User.findByIdAndUpdate(
       { _id: sellerId, role: USER_ENUM.SELLER },
-      { $inc: { income: cowPrice } }
+      { $inc: { income: cowPrice } },
+      { session }
     );
 
+    // 3. Create the Order
+    const data = await Order.create([payload], { session });
+    orderData = data[0];
+
     await session.commitTransaction();
-    await session.endSession();
   } catch (error) {
-    console.log(error);
     await session.abortTransaction();
+    throw new APIError(httpStatus.BAD_REQUEST, "Failed to make Order!");
+  } finally {
     await session.endSession();
-    throw new Error("Failed to make Order!");
   }
 
   if (orderData) {
