@@ -6,3 +6,13 @@ export type IAllDataReturnType<T> = {
   };
   data: T;
 };
+
+export type JWTPayload = {
+  _id: string;
+  role: string;
+};
+
+export type LogInReturn = {
+  accessToken: string;
+  refreshToken: string;
+};
