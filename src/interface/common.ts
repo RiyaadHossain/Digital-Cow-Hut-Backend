@@ -16,3 +16,5 @@ export type LogInReturn = {
   accessToken: string;
   refreshToken: string;
 };
+
+export type IUserCredential = { phoneNumber: string; password: string };

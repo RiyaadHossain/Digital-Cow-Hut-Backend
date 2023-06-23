@@ -9,7 +9,7 @@ const adminSchema = new Schema<IAdmin>({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
   },
-  password: { type: String, required: true /* select: 0 */ },
+  password: { type: String, required: true, select: 0 },
   role: { type: String, enum: adminRole, default: "admin" },
   phoneNumber: { type: String, unique: true, required: true, trim: true },
   address: { type: String, required: true, trim: true },
@@ -24,13 +24,13 @@ adminSchema.pre("save", async function () {
   );
 });
 
-// Check Admin Existence
+// Method: Check Admin Existence
 adminSchema.statics.isAdminExist = async function (phoneNumber) {
   const adminExist = await Admin.findOne({ phoneNumber });
   return adminExist;
 };
 
-// Check Admin Password
+// Method: Check Admin Password
 adminSchema.statics.isPassMatched = async function (givenPass, savedPass) {
   const passMatched = await bcrypt.compare(givenPass, savedPass);
   return passMatched;

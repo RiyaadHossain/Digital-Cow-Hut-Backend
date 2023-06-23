@@ -19,4 +19,3 @@ export interface AdminModel extends Model<IAdmin> {
   isPassMatched(givenPass: string, savedPass: string): boolean;
 }
 
-export type IAdminCredential = { phoneNumber: string; password: string };

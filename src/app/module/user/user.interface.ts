@@ -8,7 +8,7 @@ type Name = {
 type Role = "seller" | "buyer";
 
 export interface IUser extends Document {
-  _id: ObjectId
+  _id: string
   name: Name;
   role: Role;
   password: string;
@@ -18,7 +18,10 @@ export interface IUser extends Document {
   income?: number;
 }
 
-export type UserModel = Model<IUser, Record<string, unknown>>;
+export interface UserModel extends Model<IUser> {
+  isUserExist(phoneNumber: string): Pick<IUser, "_id" | "password" | "role">;
+  isPassMatched(givenPass: string, savedPass: string): boolean;
+}
 
 export type IUserSearchFilter = {
   searchTerm?: string;

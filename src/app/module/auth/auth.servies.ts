@@ -1,33 +1,24 @@
 import httpStatus from "http-status";
 import { APIError } from "../../../interface/APIError";
-import { IAdmin } from "./admin.interface";
-import Admin from "./admin.model";
+import User from "../user/user.model";
 import { jwtHelper } from "../../../helpers/jwtHelper";
-import config from "../../../config";
 import { Secret } from "jsonwebtoken";
+import config from "../../../config";
 import { IUserCredential, LogInReturn } from "../../../interface/common";
-
-const createAdmin = async (payload: IAdmin) => {
-  const data = await Admin.create(payload);
-  return data;
-};
 
 const login = async (payload: IUserCredential): Promise<LogInReturn> => {
   const { phoneNumber, password } = payload;
 
-  // Check Admin Existence
-  const adminExist = await Admin.isAdminExist(phoneNumber);
-  if (!adminExist) {
-    throw new APIError(httpStatus.BAD_REQUEST, "Admin account doesn't exist!");
+  // Check User Existence
+  const userExist = await User.isUserExist(phoneNumber);
+  if (!userExist) {
+    throw new APIError(httpStatus.BAD_REQUEST, "User account doesn't exist!");
   }
 
-  const { _id, role } = adminExist;
+  const { _id, role } = userExist;
 
-  // Check Admin Password
-  const isPassMatched = await Admin.isPassMatched(
-    password,
-    adminExist.password
-  );
+  // Check User Password
+  const isPassMatched = await User.isPassMatched(password, userExist.password);
   if (!isPassMatched) {
     throw new APIError(httpStatus.BAD_REQUEST, "Password is incorrect!");
   }
@@ -49,4 +40,4 @@ const login = async (payload: IUserCredential): Promise<LogInReturn> => {
   return { accessToken, refreshToken };
 };
 
-export const AdminService = { createAdmin, login };
+export const AuthService = { login };

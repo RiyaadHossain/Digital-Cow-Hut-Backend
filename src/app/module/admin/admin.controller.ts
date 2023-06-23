@@ -23,10 +23,11 @@ const login: RequestHandler = catchAsync(async (req, res) => {
   const { refreshToken, ...response } = result;
 
   // Set Cookie
-  res.cookie("refreshToken", refreshToken, {
+  const cookieOptions = {
     secure: config.NODE_ENV === "production",
     httpOnly: true,
-  });
+  };
+  res.cookie("refreshToken", refreshToken, cookieOptions);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
