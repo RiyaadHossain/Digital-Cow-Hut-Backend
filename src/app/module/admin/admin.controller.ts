@@ -1,4 +1,4 @@
-import { RequestHandler, response } from "express";
+import { RequestHandler } from "express";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import httpStatus from "http-status";
@@ -37,4 +37,25 @@ const login: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-export const AdminController = { createAdmin, login };
+const refreshToken = catchAsync(async (req, res) => {
+  const token = req.cookies.refreshToken;
+  const result = await AdminService.refreshToken(token);
+  const { refreshToken, ...response } = result;
+
+  // Set Token in Cookie
+  const cookieOptions = {
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+  };
+
+  res.cookie("refreshToken", refreshToken, cookieOptions);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "New access token retrived Successfully!",
+    data: response,
+  });
+});
+
+export const AdminController = { createAdmin, login, refreshToken };

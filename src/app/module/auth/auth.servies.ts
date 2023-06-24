@@ -33,11 +33,36 @@ const login = async (payload: IUserCredential): Promise<LogInReturn> => {
   // Refresh Token
   const refreshToken = jwtHelper.generateToken(
     { _id, role },
-    config.JWT_SECRET as Secret,
+    config.JWT_REFRESH as Secret,
     config.JWT_REFRESH_EXPIRE as string
   );
 
   return { accessToken, refreshToken };
 };
 
-export const AuthService = { login };
+const refreshToken = async (refreshToken: string): Promise<LogInReturn> => {
+  // Refresh Token Verification
+  const decoded = jwtHelper.verifyToken(
+    refreshToken,
+    config.JWT_REFRESH as string
+  );
+
+  const { _id, role } = decoded;
+
+  // Check User Existence
+  const userExist = await User.findById(_id);
+  if (!userExist) {
+    throw new APIError(httpStatus.BAD_REQUEST, "User account doesn't exist!");
+  }
+
+  // Access Token
+  const accessToken = jwtHelper.generateToken(
+    { _id, role },
+    config.JWT_SECRET as Secret,
+    config.JWT_SECRET_EXPIRE as string
+  );
+
+  return { accessToken, refreshToken };
+};
+
+export const AuthService = { login, refreshToken };

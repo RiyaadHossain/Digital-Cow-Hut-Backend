@@ -9,7 +9,7 @@ const adminSchema = new Schema<IAdmin>({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
   },
-  password: { type: String, required: true, select: 0 },
+  password: { type: String, required: true, /* select: 0 */ },
   role: { type: String, enum: adminRole, default: "admin" },
   phoneNumber: { type: String, unique: true, required: true, trim: true },
   address: { type: String, required: true, trim: true },
