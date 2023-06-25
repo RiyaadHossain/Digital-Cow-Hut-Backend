@@ -8,7 +8,7 @@ import pick from "../../../utils/pick";
 import { paginationFields } from "../../../constant/paginationFields";
 import { userSearchFilterOptions } from "./user.constant";
 
-const signup: RequestHandler = catchAsync(async (req, res, next) => {
+const signup: RequestHandler = catchAsync(async (req, res) => {
   const userData = req.body;
   const result = await UserService.signup(userData);
 
@@ -20,10 +20,13 @@ const signup: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const getAllUsers: RequestHandler = catchAsync(async (req, res, next) => {
+const getAllUsers: RequestHandler = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
   const searchFilterFields = pick(req.query, userSearchFilterOptions);
-  const result = await UserService.getAllUsers(paginationOptions, searchFilterFields);
+  const result = await UserService.getAllUsers(
+    paginationOptions,
+    searchFilterFields
+  );
 
   sendResponse<IUser[]>(res, {
     statusCode: httpStatus.OK,
@@ -34,7 +37,32 @@ const getAllUsers: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const getUser: RequestHandler = catchAsync(async (req, res, next) => {
+const myProfile: RequestHandler = catchAsync(async (req, res) => {
+  const id = req?.user?._id;
+  const result = await UserService.myProfile(id);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User's information retrieved successfully!",
+    data: result,
+  });
+});
+
+const updateProfile: RequestHandler = catchAsync(async (req, res) => {
+  const id = req?.user?._id;
+  const userData = req.body;
+  const result = await UserService.updateProfile(id, userData);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User profile data Updated Successfully!",
+    data: result,
+  });
+});
+
+const getUser: RequestHandler = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await UserService.getUser(id);
 
@@ -46,7 +74,7 @@ const getUser: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const updateUser: RequestHandler = catchAsync(async (req, res, next) => {
+const updateUser: RequestHandler = catchAsync(async (req, res) => {
   const id = req.params.id;
   const userData = req.body;
   const result = await UserService.updateUser(id, userData);
@@ -59,7 +87,7 @@ const updateUser: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteUser: RequestHandler = catchAsync(async (req, res, next) => {
+const deleteUser: RequestHandler = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await UserService.deleteUser(id);
 
@@ -74,6 +102,8 @@ const deleteUser: RequestHandler = catchAsync(async (req, res, next) => {
 export const UserController = {
   signup,
   getAllUsers,
+  myProfile,
+  updateProfile,
   getUser,
   updateUser,
   deleteUser,

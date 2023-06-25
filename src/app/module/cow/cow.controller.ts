@@ -10,7 +10,8 @@ import { cowSearchFilterOptions } from "./cow.constant";
 
 const createCow: RequestHandler = catchAsync(async (req, res, next) => {
   const cowData = req.body;
-  const result = await CowService.createCow(cowData);
+  const seller = req.user
+  const result = await CowService.createCow(cowData, seller);
 
   sendResponse<ICow>(res, {
     statusCode: httpStatus.OK,
@@ -52,7 +53,8 @@ const getCow: RequestHandler = catchAsync(async (req, res, next) => {
 const updateCow: RequestHandler = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   const cowData = req.body;
-  const result = await CowService.updateCow(id, cowData);
+  const seller = req.user;
+  const result = await CowService.updateCow(id, cowData, seller);
 
   sendResponse<ICow>(res, {
     statusCode: httpStatus.OK,
@@ -64,7 +66,8 @@ const updateCow: RequestHandler = catchAsync(async (req, res, next) => {
 
 const deleteCow: RequestHandler = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  const result = await CowService.deleteCow(id);
+  const seller = req.user;
+  const result = await CowService.deleteCow(id, seller);
 
   sendResponse<ICow>(res, {
     statusCode: httpStatus.OK,

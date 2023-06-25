@@ -7,11 +7,13 @@ import { cowSearchFields } from "./cow.constant";
 import { ICow, ICowSearchFilter } from "./cow.interface";
 import Cow from "./cow.model";
 import { isCowFound, isSeller } from "./cow.utils";
+import { JwtPayload } from "jsonwebtoken";
 
-const createCow = async (payload: ICow): Promise<ICow | null> => {
-  if (!(await isSeller(payload.seller))) {
-    throw new APIError(httpStatus.BAD_REQUEST, "Seller account is incorrect!");
-  }
+const createCow = async (
+  payload: ICow,
+  seller: JwtPayload | null
+): Promise<ICow | null> => {
+  payload.seller = seller?._id;
   const data = (await Cow.create(payload)).populate("seller");
   return data;
 };
@@ -77,12 +79,19 @@ const getCow = async (id: string): Promise<ICow | null> => {
   return data;
 };
 
-const updateCow = async (_id: string, payload: ICow): Promise<ICow | null> => {
-  if (!(await isCowFound(_id))) {
+const updateCow = async (
+  _id: string,
+  payload: ICow,
+  seller: JwtPayload | null
+): Promise<ICow | null> => {
+  // Check Cow Existence
+  const cow = await Cow.findById(_id).lean();
+  if (!cow) {
     throw new APIError(400, "Cow not Found!");
   }
 
-  if (payload.seller && !(await isSeller(payload.seller))) {
+  // Check Seller Account
+  if (seller && cow.seller.toString() !== seller._id.toString()) {
     throw new APIError(httpStatus.BAD_REQUEST, "Seller account is incorrect!");
   }
 
@@ -94,9 +103,19 @@ const updateCow = async (_id: string, payload: ICow): Promise<ICow | null> => {
   return data;
 };
 
-const deleteCow = async (id: string): Promise<ICow | null> => {
-  if (!(await isCowFound(id))) {
+const deleteCow = async (
+  id: string,
+  seller: JwtPayload | null
+): Promise<ICow | null> => {
+  // Check Cow Existence
+  const cow = await Cow.findById(id).lean();
+  if (!cow) {
     throw new APIError(400, "Cow not Found!");
+  }
+
+  // Check Seller Account
+  if (seller && cow.seller.toString() !== seller._id.toString()) {
+    throw new APIError(httpStatus.BAD_REQUEST, "Seller account is incorrect!");
   }
 
   const data = await Cow.findByIdAndDelete(id).populate("seller");

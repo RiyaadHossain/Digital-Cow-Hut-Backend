@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import Cow from "../cow/cow.model";
 import User from "../user/user.model";
 import { USER_ENUM } from "../../../enum/common";
+import { JwtPayload } from "jsonwebtoken";
 
 const createOrder = async (payload: IOrder): Promise<IOrder | null> => {
   const cowId = payload.cow;
@@ -78,7 +79,8 @@ const createOrder = async (payload: IOrder): Promise<IOrder | null> => {
 };
 
 const getAllOrders = async (
-  paginationOptions: IPagination
+  paginationOptions: IPagination,
+  user: JwtPayload | null
 ): Promise<IAllDataReturnType<IOrder[]> | null> => {
   // Pagination
   const { page, limit, skip, sortBy, sortOrder } =
@@ -87,11 +89,43 @@ const getAllOrders = async (
   // Sort Condition
   const sortCondition = { [sortBy]: sortOrder };
 
-  const data = await Order.find()
-    .populate("cow buyer")
-    .sort(sortCondition)
-    .skip(skip)
-    .limit(limit);
+  let data: any;
+  if (user?.role === "seller") {
+    data = await Order.aggregate([
+      {
+        $lookup: {
+          from: "Cow",
+          localField: "cow",
+          foreignField: "_id",
+          as: "cow",
+        },
+      },
+      {
+        $match: { "cow.seller": user._id },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+  } else if (user?.role === "buyer") {
+    data = await Order.find({ buyer: user._id })
+      .populate("cow buyer")
+      .sort(sortCondition)
+      .skip(skip)
+      .limit(limit);
+  } else {
+    data = await Order.find()
+      .populate("cow buyer")
+      .sort(sortCondition)
+      .skip(skip)
+      .limit(limit);
+  }
+
+  // const data = await Order.find().sort(sortCondition).skip(skip).limit(limit);
+
   const total = await Order.countDocuments();
   const meta = { page, limit, total };
   return { meta, data };
@@ -111,3 +145,24 @@ export const OrderService = {
   getAllOrders,
   getOrder,
 };
+
+/*   let query = Order.find();
+
+  if (user) {
+    if (user.role === "admin") {
+      // Admin can get all orders
+      query = query.populate("cow buyer");
+    } else if (user.role === "buyer") {
+      // Buyer can get orders associated with their ID
+      query = query.find({ buyer: user._id }).populate("cow buyer");
+    } else if (user.role === "seller") {
+      // Seller can get orders associated with their ID
+      query = query
+        .populate({
+          path: "cow",
+          match: { "cow.seller": user._id },
+        });
+    }
+  } 
+  const data = await query.sort(sortCondition).skip(skip).limit(limit);
+*/

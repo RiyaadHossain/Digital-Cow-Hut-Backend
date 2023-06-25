@@ -19,7 +19,6 @@ const createCowZodSchema = z.object({
     category: z.enum([...cowCategory] as [string, ...string[]], {
       required_error: "Category is required",
     }),
-    seller: z.string({ required_error: "Seller is required!" }),
   }),
 });
 

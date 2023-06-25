@@ -6,6 +6,6 @@ const OrderSchema = new Schema<IOrder>({
   buyer: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
-const Order = model<IOrder, OrderModel>("OrderIOrder", OrderSchema);
+const Order = model<IOrder, OrderModel>("Order", OrderSchema);
 
 export default Order;

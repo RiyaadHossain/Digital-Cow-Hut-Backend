@@ -9,11 +9,10 @@ const auth =
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
-    if (!token) {
-      throw new APIError(httpStatus.UNAUTHORIZED, "Unauthorization Access!");
-    }
-
     try {
+      if (!token) {
+        throw new APIError(httpStatus.UNAUTHORIZED, "Unauthorization Access!");
+      }
       // Access Token Verificaiton
       const user = jwtHelper.verifyToken(token, config.JWT_SECRET as string);
 
@@ -26,7 +25,7 @@ const auth =
 
       next();
     } catch (error) {
-      throw new APIError(httpStatus.BAD_REQUEST, "Invalid Token!");
+      next(error);
     }
   };
 

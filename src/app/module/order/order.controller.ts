@@ -21,9 +21,8 @@ const createOrder: RequestHandler = catchAsync(async (req, res, next) => {
 
 const getAllOrders: RequestHandler = catchAsync(async (req, res, next) => {
   const paginationOptions = pick(req.query, paginationFields);
-  const result = await OrderService.getAllOrders(
-    paginationOptions
-  );
+  const user = req.user;
+  const result = await OrderService.getAllOrders(paginationOptions, user);
 
   sendResponse<IOrder[]>(res, {
     statusCode: httpStatus.OK,
@@ -46,9 +45,8 @@ const getOrder: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-
 export const OrderController = {
   createOrder,
   getAllOrders,
-  getOrder
+  getOrder,
 };
