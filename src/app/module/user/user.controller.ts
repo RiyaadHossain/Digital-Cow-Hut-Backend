@@ -62,30 +62,6 @@ const updateProfile: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-const getUser: RequestHandler = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const result = await UserService.getUser(id);
-
-  sendResponse<IUser>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "User data Retrived Successfully!",
-    data: result,
-  });
-});
-
-const updateUser: RequestHandler = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const userData = req.body;
-  const result = await UserService.updateUser(id, userData);
-
-  sendResponse<IUser>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "User data Updated Successfully!",
-    data: result,
-  });
-});
 
 const deleteUser: RequestHandler = catchAsync(async (req, res) => {
   const id = req.params.id;
@@ -104,7 +80,5 @@ export const UserController = {
   getAllUsers,
   myProfile,
   updateProfile,
-  getUser,
-  updateUser,
   deleteUser,
 };

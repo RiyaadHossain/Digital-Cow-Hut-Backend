@@ -6,7 +6,7 @@ import { IAllDataReturnType } from "../../../interface/common";
 import { IOrder } from "./order.interface";
 import Order from "./order.model";
 import { isOrderFound } from "./order.utils";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import Cow from "../cow/cow.model";
 import User from "../user/user.model";
 import { USER_ENUM } from "../../../enum/common";
@@ -89,19 +89,47 @@ const getAllOrders = async (
   // Sort Condition
   const sortCondition = { [sortBy]: sortOrder };
 
-  let data: any;
+  let data: IOrder[];
+
+  const userId = new mongoose.Types.ObjectId(user?._id);
+
   if (user?.role === "seller") {
     data = await Order.aggregate([
       {
         $lookup: {
-          from: "Cow",
+          from: "cows",
           localField: "cow",
           foreignField: "_id",
           as: "cow",
         },
       },
       {
-        $match: { "cow.seller": user._id },
+        $unwind: "$cow",
+      },
+      {
+        $match: { "cow.seller": userId },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "cow.seller",
+          foreignField: "_id",
+          as: "cow.seller",
+        },
+      },
+      {
+        $unwind: "$cow.seller",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyer",
+        },
+      },
+      {
+        $unwind: "$buyer",
       },
       {
         $skip: skip,
@@ -112,31 +140,91 @@ const getAllOrders = async (
     ]);
   } else if (user?.role === "buyer") {
     data = await Order.find({ buyer: user._id })
-      .populate("cow buyer")
+      .populate("buyer")
+      .populate({ path: "cow", populate: { path: "seller" } })
       .sort(sortCondition)
       .skip(skip)
       .limit(limit);
   } else {
     data = await Order.find()
-      .populate("cow buyer")
+      .populate("buyer")
+      .populate({ path: "cow", populate: { path: "seller" } })
       .sort(sortCondition)
       .skip(skip)
       .limit(limit);
   }
-
-  // const data = await Order.find().sort(sortCondition).skip(skip).limit(limit);
 
   const total = await Order.countDocuments();
   const meta = { page, limit, total };
   return { meta, data };
 };
 
-const getOrder = async (id: string): Promise<IOrder | null> => {
-  if (!(await isOrderFound(id))) {
+const getOrder = async (
+  _id: string,
+  user: JwtPayload | null
+): Promise<IOrder | null> => {
+  if (!(await isOrderFound(_id))) {
     throw new APIError(400, "Order not Found!");
   }
 
-  const data = await Order.findById(id).populate("cow buyer");
+  const orderId = new mongoose.Types.ObjectId(_id);
+  const userId = new mongoose.Types.ObjectId(user?._id);
+
+  let data: IOrder | null;
+  if (user?.role === USER_ENUM.BUYER) {
+    const result = await Order.aggregate([
+      {
+        $match: { _id: orderId },
+      },
+      {
+        $lookup: {
+          from: "cows",
+          localField: "cow",
+          foreignField: "_id",
+          as: "cow",
+        },
+      },
+      {
+        $unwind: "$cow",
+      },
+      {
+        $match: { "cow.seller": userId },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "cow.seller",
+          foreignField: "_id",
+          as: "cow.seller",
+        },
+      },
+      {
+        $unwind: "$cow.seller",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyer",
+        },
+      },
+      {
+        $unwind: "$buyer",
+      },
+    ]);
+
+    data = result[0];
+  } else if (user?.role === USER_ENUM.SELLER) {
+    data = await Order.findOne({ _id, buyer: user._id })
+      .populate("buyer")
+      .populate({ path: "cow", populate: { path: "seller" } });
+  } else {
+    data = await Order.findById(_id)
+      .populate("buyer")
+      .populate({ path: "cow", populate: { path: "seller" } });
+  }
+
   return data;
 };
 
@@ -146,7 +234,10 @@ export const OrderService = {
   getOrder,
 };
 
-/*   let query = Order.find();
+/*   
+########## Can be optimized ##############
+
+let query = Order.find();
 
   if (user) {
     if (user.role === "admin") {
@@ -163,6 +254,7 @@ export const OrderService = {
           match: { "cow.seller": user._id },
         });
     }
-  } 
-  const data = await query.sort(sortCondition).skip(skip).limit(limit);
+  }
+  
+const data = await query.sort(sortCondition).skip(skip).limit(limit);
 */

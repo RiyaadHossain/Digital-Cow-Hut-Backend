@@ -104,40 +104,6 @@ const updateProfile = async (
   return data;
 };
 
-const getUser = async (id: string): Promise<IUser | null> => {
-  if (!(await isUserFound(id))) {
-    throw new APIError(400, "User not Found!");
-  }
-
-  const data = await User.findById(id);
-  return data;
-};
-
-const updateUser = async (
-  _id: string,
-  payload: IUser
-): Promise<IUser | null> => {
-  if (!(await isUserFound(_id))) {
-    throw new APIError(400, "User not Found!");
-  }
-
-  let { name, ...userData } = payload;
-
-  if (name && Object.keys(name).length) {
-    Object.keys(name).map((field) => {
-      const nameKey = `name.${field}`;
-      (userData as any)[nameKey] = name[field as keyof typeof name];
-    });
-  }
-
-  const data = await User.findOneAndUpdate({ _id }, userData, {
-    new: true,
-    runValidators: true,
-  });
-
-  return data;
-};
-
 const deleteUser = async (id: string): Promise<IUser | null> => {
   if (!(await isUserFound(id))) {
     throw new APIError(400, "User not Found!");
@@ -152,7 +118,5 @@ export const UserService = {
   getAllUsers,
   myProfile,
   updateProfile,
-  getUser,
-  updateUser,
   deleteUser,
 };

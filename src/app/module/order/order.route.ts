@@ -19,6 +19,10 @@ router.get(
   OrderController.getAllOrders
 );
 
-router.get("/:id", OrderController.getOrder);
+router.get(
+  "/:id",
+  auth(USER_ENUM.BUYER, USER_ENUM.SELLER, USER_ENUM.ADMIN),
+  OrderController.getOrder
+);
 
 export const OrderRoute = router;

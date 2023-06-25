@@ -14,22 +14,17 @@ router.post(
 
 router.get("/", auth(USER_ENUM.ADMIN), UserController.getAllUsers);
 
-router.get("/my-profile", auth(), UserController.myProfile);
+router.get(
+  "/my-profile",
+  auth(USER_ENUM.BUYER, USER_ENUM.SELLER, USER_ENUM.ADMIN),
+  UserController.myProfile
+);
 
 router.patch(
   "/my-profile",
   validateRequest(UserValidation.updateUserZodSchema),
-  auth(),
+  auth(USER_ENUM.BUYER, USER_ENUM.SELLER, USER_ENUM.ADMIN),
   UserController.updateProfile
-);
-
-router.get("/:id", auth(USER_ENUM.ADMIN), UserController.getUser);
-
-router.patch(
-  "/:id",
-  validateRequest(UserValidation.updateUserZodSchema),
-  auth(USER_ENUM.ADMIN),
-  UserController.updateUser
 );
 
 router.delete("/:id", auth(USER_ENUM.ADMIN), UserController.deleteUser);
