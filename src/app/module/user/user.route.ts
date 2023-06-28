@@ -19,12 +19,20 @@ router.get(
   auth(USER_ENUM.BUYER, USER_ENUM.SELLER, USER_ENUM.ADMIN),
   UserController.myProfile
 );
-router.get("/:id", auth(USER_ENUM.ADMIN), UserController.getAllUser);
+
+router.get("/:id", auth(USER_ENUM.ADMIN), UserController.getUser);
 
 router.patch(
   "/my-profile",
   validateRequest(UserValidation.updateUserZodSchema),
   auth(USER_ENUM.BUYER, USER_ENUM.SELLER, USER_ENUM.ADMIN),
+  UserController.updateProfile
+);
+
+router.patch(
+  "/:id",
+  validateRequest(UserValidation.updateUserZodSchema),
+  auth(USER_ENUM.ADMIN),
   UserController.updateProfile
 );
 
