@@ -78,6 +78,10 @@ const getAllUsers = (paginationOptions, searchFilterFields) => __awaiter(void 0,
     const meta = { page, limit, total };
     return { meta, data };
 });
+const getAllUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield user_model_1.default.findById(id);
+    return data;
+});
 const myProfile = (id) => __awaiter(void 0, void 0, void 0, function* () {
     if (!(yield (0, user_utils_1.default)(id))) {
         throw new APIError_1.APIError(400, "User not Found!");
@@ -112,6 +116,7 @@ const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
 exports.UserService = {
     signup,
     getAllUsers,
+    getAllUser,
     myProfile,
     updateProfile,
     deleteUser,

@@ -42,6 +42,16 @@ const getAllUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         data: result === null || result === void 0 ? void 0 : result.data,
     });
 }));
+const getUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const result = yield user_services_1.UserService.getAllUser(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User data Retrived Successfully!",
+        data: result,
+    });
+}));
 const myProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id;
@@ -54,6 +64,17 @@ const myProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     });
 }));
 const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const userData = req.body;
+    const result = yield user_services_1.UserService.updateProfile(id, userData);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User profile data Updated Successfully!",
+        data: result,
+    });
+}));
+const updateUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const id = (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b._id;
     const userData = req.body;
@@ -61,7 +82,7 @@ const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User profile data Updated Successfully!",
+        message: "User data Updated Successfully!",
         data: result,
     });
 }));
@@ -78,7 +99,9 @@ const deleteUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 exports.UserController = {
     signup,
     getAllUsers,
+    getUser,
     myProfile,
     updateProfile,
+    updateUser,
     deleteUser,
 };

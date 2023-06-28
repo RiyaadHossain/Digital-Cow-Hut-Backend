@@ -14,6 +14,8 @@ const router = express_1.default.Router();
 router.post("/signup", (0, validateRequest_1.default)(user_validation_1.UserValidation.signupZodSchema), user_controller_1.UserController.signup);
 router.get("/", (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.getAllUsers);
 router.get("/my-profile", (0, auth_1.default)(common_1.USER_ENUM.BUYER, common_1.USER_ENUM.SELLER, common_1.USER_ENUM.ADMIN), user_controller_1.UserController.myProfile);
+router.get("/:id", (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.getUser);
 router.patch("/my-profile", (0, validateRequest_1.default)(user_validation_1.UserValidation.updateUserZodSchema), (0, auth_1.default)(common_1.USER_ENUM.BUYER, common_1.USER_ENUM.SELLER, common_1.USER_ENUM.ADMIN), user_controller_1.UserController.updateProfile);
+router.patch("/:id", (0, validateRequest_1.default)(user_validation_1.UserValidation.updateUserZodSchema), (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.updateProfile);
 router.delete("/:id", (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.deleteUser);
 exports.UserRoute = router;
