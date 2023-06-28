@@ -69,6 +69,11 @@ const getAllUsers = async (
   return { meta, data };
 };
 
+const getAllUser = async (id: string): Promise<IUser | null> => {
+  const data = await User.findById(id);
+  return data;
+};
+
 const myProfile = async (id: string): Promise<IUser | null> => {
   if (!(await isUserFound(id))) {
     throw new APIError(400, "User not Found!");
@@ -82,7 +87,6 @@ const updateProfile = async (
   _id: string,
   payload: IUser
 ): Promise<IUser | null> => {
-
   if (!(await isUserFound(_id))) {
     throw new APIError(400, "User not Found!");
   }
@@ -116,6 +120,7 @@ const deleteUser = async (id: string): Promise<IUser | null> => {
 export const UserService = {
   signup,
   getAllUsers,
+  getAllUser,
   myProfile,
   updateProfile,
   deleteUser,
