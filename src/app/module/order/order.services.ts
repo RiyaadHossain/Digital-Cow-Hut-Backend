@@ -163,15 +163,25 @@ const getOrder = async (
   _id: string,
   user: JwtPayload | null
 ): Promise<IOrder | null> => {
-  if (!(await isOrderFound(_id))) {
+  const order = await Order.findById(_id).populate("cow");
+  if (!order) {
     throw new APIError(400, "Order not Found!");
   }
+
+  // Customize Autorization
+  /*   if (user?.role === USER_ENUM.BUYER && user?._id !== order.buyer) {
+    throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
+  }
+
+  if (user?.role === USER_ENUM.SELLER && user?._id !== order.cow.seller) {
+    throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
+  } */
 
   const orderId = new mongoose.Types.ObjectId(_id);
   const userId = new mongoose.Types.ObjectId(user?._id);
 
   let data: IOrder | null;
-  if (user?.role === USER_ENUM.BUYER) {
+  if (user?.role === USER_ENUM.SELLER) {
     const result = await Order.aggregate([
       {
         $match: { _id: orderId },
@@ -215,7 +225,7 @@ const getOrder = async (
     ]);
 
     data = result[0];
-  } else if (user?.role === USER_ENUM.SELLER) {
+  } else if (user?.role === USER_ENUM.BUYER) {
     data = await Order.findOne({ _id, buyer: user._id })
       .populate("buyer")
       .populate({ path: "cow", populate: { path: "seller" } });
@@ -224,6 +234,9 @@ const getOrder = async (
       .populate("buyer")
       .populate({ path: "cow", populate: { path: "seller" } });
   }
+
+  if (!data)
+    throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
 
   return data;
 };

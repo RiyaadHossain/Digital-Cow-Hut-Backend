@@ -11,14 +11,14 @@ const auth =
 
     try {
       if (!token) {
-        throw new APIError(httpStatus.UNAUTHORIZED, "Unauthorization Access!");
+        throw new APIError(httpStatus.UNAUTHORIZED, "Authenticaiton Required!");
       }
       // Access Token Verificaiton
       const user = jwtHelper.verifyToken(token, config.JWT_SECRET as string);
 
       // Role Authorization
       if (requiredRoles.length && !requiredRoles.includes(user.role)) {
-        throw new APIError(httpStatus.BAD_REQUEST, "Authenticaiton Required!");
+        throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
       }
 
       req.user = user;

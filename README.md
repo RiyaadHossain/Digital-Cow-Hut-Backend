@@ -1,4 +1,4 @@
-### Live Link: https://digital-cow-hut-backend-pi.vercel.app
+### Live Link: https://digital-cow-hut-backend-pi.vercel.app/
 
 ### Application Routes:
 
