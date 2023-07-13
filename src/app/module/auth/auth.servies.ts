@@ -5,6 +5,26 @@ import { jwtHelper } from "../../../helpers/jwtHelper";
 import { Secret } from "jsonwebtoken";
 import config from "../../../config";
 import { IUserCredential, LogInReturn } from "../../../interface/common";
+import { IUser } from "../user/user.interface";
+import { USER_ENUM } from "../../../enum/common";
+
+const signup = async (payload: IUser): Promise<IUser | null> => {
+  const { role, budget } = payload;
+
+  // Business Logic: Buyer -> budgaet < 20k
+  if (role == USER_ENUM.BUYER) {
+    if (!budget) throw new APIError(400, "Budget is Required!");
+    if (budget < 20000) {
+      throw new APIError(400, "Budget should be at least more than 20000!");
+    }
+  }
+
+  // Business Logic: Seller -> income
+  if (role == USER_ENUM.SELLER) payload.income = 0;
+
+  const data = await User.create(payload);
+  return data;
+};
 
 const login = async (payload: IUserCredential): Promise<LogInReturn> => {
   const { phoneNumber, password } = payload;
@@ -65,4 +85,4 @@ const refreshToken = async (refreshToken: string): Promise<LogInReturn> => {
   return { accessToken, refreshToken };
 };
 
-export const AuthService = { login, refreshToken };
+export const AuthService = { signup, login, refreshToken };

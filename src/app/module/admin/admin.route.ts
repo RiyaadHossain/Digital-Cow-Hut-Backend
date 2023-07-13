@@ -8,6 +8,4 @@ router.post('/create-admin', validateRequest(AdminValidation.createAdminZodSchem
 
 router.post('/login', validateRequest(AdminValidation.loginZodSchema), AdminController.login)
 
-router.post('/refresh-token', validateRequest(AdminValidation.refreshTokenZodSchema), AdminController.refreshToken)
-
 export const AdminRoute = router

@@ -3,6 +3,20 @@ import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { AuthService } from "./auth.servies";
 import config from "../../../config";
+import { IUser } from "../user/user.interface";
+import { RequestHandler } from "express";
+
+const signup: RequestHandler = catchAsync(async (req, res) => {
+  const userData = req.body;
+  const result = await AuthService.signup(userData);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Signed up Successfully!",
+    data: result,
+  });
+});
 
 const login = catchAsync(async (req, res) => {
   const userCredentials = req.body;
@@ -46,4 +60,4 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-export const AuthController = { login, refreshToken };
+export const AuthController = { signup, login, refreshToken };

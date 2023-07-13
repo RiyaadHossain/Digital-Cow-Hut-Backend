@@ -1,4 +1,3 @@
-import { USER_ENUM } from "../../../enum/common";
 import paginationHelper from "../../../helpers/paginationHelper";
 import { APIError } from "../../../interface/APIError";
 import { IPagination } from "../../../interface/Pagination";
@@ -7,24 +6,6 @@ import { userSearchFields } from "./user.constant";
 import { IUser, IUserSearchFilter } from "./user.interface";
 import User from "./user.model";
 import isUserFound from "./user.utils";
-
-const signup = async (payload: IUser): Promise<IUser | null> => {
-  const { role, budget } = payload;
-
-  // Business Logic: Buyer -> budgaet < 20k
-  if (role == USER_ENUM.BUYER) {
-    if (!budget) throw new APIError(400, "Budget is Required!");
-    if (budget < 20000) {
-      throw new APIError(400, "Budget should be at least more than 20000!");
-    }
-  }
-
-  // Business Logic: Seller -> income
-  if (role == USER_ENUM.SELLER) payload.income = 0;
-
-  const data = await User.create(payload);
-  return data;
-};
 
 const getAllUsers = async (
   paginationOptions: IPagination,
@@ -118,7 +99,6 @@ const deleteUser = async (id: string): Promise<IUser | null> => {
 };
 
 export const UserService = {
-  signup,
   getAllUsers,
   getAllUser,
   myProfile,

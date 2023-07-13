@@ -49,29 +49,4 @@ const login = async (payload: IUserCredential): Promise<LogInReturn> => {
   return { accessToken, refreshToken };
 };
 
-const refreshToken = async (refreshToken: string): Promise<LogInReturn> => {
-  // Refresh Token Verification
-  const decoded = jwtHelper.verifyToken(
-    refreshToken,
-    config.JWT_REFRESH as string
-  );
-
-  const { _id, role } = decoded;
-
-  // Check User Existence
-  const userExist = await Admin.findById(_id);
-  if (!userExist) {
-    throw new APIError(httpStatus.BAD_REQUEST, "User account doesn't exist!");
-  }
-
-  // Access Token
-  const accessToken = jwtHelper.generateToken(
-    { _id, role },
-    config.JWT_SECRET as Secret,
-    config.JWT_SECRET_EXPIRE as string
-  );
-
-  return { accessToken, refreshToken };
-};
-
-export const AdminService = { createAdmin, login, refreshToken };
+export const AdminService = { createAdmin, login };

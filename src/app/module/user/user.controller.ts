@@ -8,18 +8,6 @@ import pick from "../../../utils/pick";
 import { paginationFields } from "../../../constant/paginationFields";
 import { userSearchFilterOptions } from "./user.constant";
 
-const signup: RequestHandler = catchAsync(async (req, res) => {
-  const userData = req.body;
-  const result = await UserService.signup(userData);
-
-  sendResponse<IUser>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "User Signed up Successfully!",
-    data: result,
-  });
-});
-
 const getAllUsers: RequestHandler = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
   const searchFilterFields = pick(req.query, userSearchFilterOptions);
@@ -100,7 +88,6 @@ const deleteUser: RequestHandler = catchAsync(async (req, res) => {
 });
 
 export const UserController = {
-  signup,
   getAllUsers,
   getUser,
   myProfile,
