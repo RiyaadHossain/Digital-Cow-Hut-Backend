@@ -17,7 +17,7 @@ const signup: RequestHandler = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
+ 
 const login = catchAsync(async (req, res) => {
   const userCredentials = req.body;
   const result = await AuthService.login(userCredentials);
