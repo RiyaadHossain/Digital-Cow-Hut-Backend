@@ -29,6 +29,16 @@ const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
 const auth_servies_1 = require("./auth.servies");
 const config_1 = __importDefault(require("../../../config"));
+const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = req.body;
+    const result = yield auth_servies_1.AuthService.signup(userData);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User Signed up Successfully!",
+        data: result,
+    });
+}));
 const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userCredentials = req.body;
     const result = yield auth_servies_1.AuthService.login(userCredentials);
@@ -63,4 +73,4 @@ const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: response,
     });
 }));
-exports.AuthController = { login, refreshToken };
+exports.AuthController = { signup, login, refreshToken };

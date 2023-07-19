@@ -17,7 +17,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const paginationHelper_1 = __importDefault(require("../../../helpers/paginationHelper"));
 const APIError_1 = require("../../../interface/APIError");
 const order_model_1 = __importDefault(require("./order.model"));
-const order_utils_1 = require("./order.utils");
 const mongoose_1 = __importDefault(require("mongoose"));
 const cow_model_1 = __importDefault(require("../cow/cow.model"));
 const user_model_1 = __importDefault(require("../user/user.model"));
@@ -141,13 +140,22 @@ const getAllOrders = (paginationOptions, user) => __awaiter(void 0, void 0, void
     return { meta, data };
 });
 const getOrder = (_id, user) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!(yield (0, order_utils_1.isOrderFound)(_id))) {
+    const order = yield order_model_1.default.findById(_id).populate("cow");
+    if (!order) {
         throw new APIError_1.APIError(400, "Order not Found!");
     }
+    // Customize Autorization
+    /*   if (user?.role === USER_ENUM.BUYER && user?._id !== order.buyer) {
+      throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
+    }
+  
+    if (user?.role === USER_ENUM.SELLER && user?._id !== order.cow.seller) {
+      throw new APIError(httpStatus.BAD_REQUEST, "Unauthorization Access!");
+    } */
     const orderId = new mongoose_1.default.Types.ObjectId(_id);
     const userId = new mongoose_1.default.Types.ObjectId(user === null || user === void 0 ? void 0 : user._id);
     let data;
-    if ((user === null || user === void 0 ? void 0 : user.role) === common_1.USER_ENUM.BUYER) {
+    if ((user === null || user === void 0 ? void 0 : user.role) === common_1.USER_ENUM.SELLER) {
         const result = yield order_model_1.default.aggregate([
             {
                 $match: { _id: orderId },
@@ -191,7 +199,7 @@ const getOrder = (_id, user) => __awaiter(void 0, void 0, void 0, function* () {
         ]);
         data = result[0];
     }
-    else if ((user === null || user === void 0 ? void 0 : user.role) === common_1.USER_ENUM.SELLER) {
+    else if ((user === null || user === void 0 ? void 0 : user.role) === common_1.USER_ENUM.BUYER) {
         data = yield order_model_1.default.findOne({ _id, buyer: user._id })
             .populate("buyer")
             .populate({ path: "cow", populate: { path: "seller" } });
@@ -201,6 +209,8 @@ const getOrder = (_id, user) => __awaiter(void 0, void 0, void 0, function* () {
             .populate("buyer")
             .populate({ path: "cow", populate: { path: "seller" } });
     }
+    if (!data)
+        throw new APIError_1.APIError(http_status_1.default.BAD_REQUEST, "Unauthorization Access!");
     return data;
 });
 exports.OrderService = {

@@ -18,6 +18,23 @@ const APIError_1 = require("../../../interface/APIError");
 const user_model_1 = __importDefault(require("../user/user.model"));
 const jwtHelper_1 = require("../../../helpers/jwtHelper");
 const config_1 = __importDefault(require("../../../config"));
+const common_1 = require("../../../enum/common");
+const signup = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const { role, budget } = payload;
+    // Business Logic: Buyer -> budgaet < 20k
+    if (role == common_1.USER_ENUM.BUYER) {
+        if (!budget)
+            throw new APIError_1.APIError(400, "Budget is Required!");
+        if (budget < 20000) {
+            throw new APIError_1.APIError(400, "Budget should be at least more than 20000!");
+        }
+    }
+    // Business Logic: Seller -> income
+    if (role == common_1.USER_ENUM.SELLER)
+        payload.income = 0;
+    const data = yield user_model_1.default.create(payload);
+    return data;
+});
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { phoneNumber, password } = payload;
     // Check User Existence
@@ -50,4 +67,4 @@ const refreshToken = (refreshToken) => __awaiter(void 0, void 0, void 0, functio
     const accessToken = jwtHelper_1.jwtHelper.generateToken({ _id, role }, config_1.default.JWT_SECRET, config_1.default.JWT_SECRET_EXPIRE);
     return { accessToken, refreshToken };
 });
-exports.AuthService = { login, refreshToken };
+exports.AuthService = { signup, login, refreshToken };

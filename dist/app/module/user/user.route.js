@@ -11,7 +11,6 @@ const validateRequest_1 = __importDefault(require("../../middleware/validateRequ
 const auth_1 = __importDefault(require("../../middleware/auth"));
 const common_1 = require("../../../enum/common");
 const router = express_1.default.Router();
-router.post("/signup", (0, validateRequest_1.default)(user_validation_1.UserValidation.signupZodSchema), user_controller_1.UserController.signup);
 router.get("/", (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.getAllUsers);
 router.get("/my-profile", (0, auth_1.default)(common_1.USER_ENUM.BUYER, common_1.USER_ENUM.SELLER, common_1.USER_ENUM.ADMIN), user_controller_1.UserController.myProfile);
 router.get("/:id", (0, auth_1.default)(common_1.USER_ENUM.ADMIN), user_controller_1.UserController.getUser);

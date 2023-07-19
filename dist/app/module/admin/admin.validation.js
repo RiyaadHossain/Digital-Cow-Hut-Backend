@@ -21,13 +21,7 @@ const loginZodSchema = zod_1.z.object({
         password: zod_1.z.string({ required_error: "Password is required!" }),
     }),
 });
-const refreshTokenZodSchema = zod_1.z.object({
-    cookies: zod_1.z.object({
-        refreshToken: zod_1.z.string({ required_error: "Refresh Token is required!" }),
-    }),
-});
 exports.AdminValidation = {
     createAdminZodSchema,
-    loginZodSchema,
-    refreshTokenZodSchema,
+    loginZodSchema
 };

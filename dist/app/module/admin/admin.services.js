@@ -41,17 +41,4 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const refreshToken = jwtHelper_1.jwtHelper.generateToken({ _id, role }, config_1.default.JWT_REFRESH, config_1.default.JWT_REFRESH_EXPIRE);
     return { accessToken, refreshToken };
 });
-const refreshToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
-    // Refresh Token Verification
-    const decoded = jwtHelper_1.jwtHelper.verifyToken(refreshToken, config_1.default.JWT_REFRESH);
-    const { _id, role } = decoded;
-    // Check User Existence
-    const userExist = yield admin_model_1.default.findById(_id);
-    if (!userExist) {
-        throw new APIError_1.APIError(http_status_1.default.BAD_REQUEST, "User account doesn't exist!");
-    }
-    // Access Token
-    const accessToken = jwtHelper_1.jwtHelper.generateToken({ _id, role }, config_1.default.JWT_SECRET, config_1.default.JWT_SECRET_EXPIRE);
-    return { accessToken, refreshToken };
-});
-exports.AdminService = { createAdmin, login, refreshToken };
+exports.AdminService = { createAdmin, login };

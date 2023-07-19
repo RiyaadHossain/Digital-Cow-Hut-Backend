@@ -56,21 +56,4 @@ const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, 
         data: response,
     });
 }));
-const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.cookies.refreshToken;
-    const result = yield admin_services_1.AdminService.refreshToken(token);
-    const { refreshToken } = result, response = __rest(result, ["refreshToken"]);
-    // Set Token in Cookie
-    const cookieOptions = {
-        secure: config_1.default.NODE_ENV === "production",
-        httpOnly: true,
-    };
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: "New access token retrived Successfully!",
-        data: response,
-    });
-}));
-exports.AdminController = { createAdmin, login, refreshToken };
+exports.AdminController = { createAdmin, login };

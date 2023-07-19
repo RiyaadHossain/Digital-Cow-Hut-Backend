@@ -20,16 +20,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const pick_1 = __importDefault(require("../../../utils/pick"));
 const paginationFields_1 = require("../../../constant/paginationFields");
 const user_constant_1 = require("./user.constant");
-const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userData = req.body;
-    const result = yield user_services_1.UserService.signup(userData);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: "User Signed up Successfully!",
-        data: result,
-    });
-}));
 const getAllUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const paginationOptions = (0, pick_1.default)(req.query, paginationFields_1.paginationFields);
     const searchFilterFields = (0, pick_1.default)(req.query, user_constant_1.userSearchFilterOptions);
@@ -97,7 +87,6 @@ const deleteUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 exports.UserController = {
-    signup,
     getAllUsers,
     getUser,
     myProfile,

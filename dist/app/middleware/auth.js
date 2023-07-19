@@ -20,13 +20,13 @@ const auth = (...requiredRoles) => (req, res, next) => __awaiter(void 0, void 0,
     const token = req.headers.authorization;
     try {
         if (!token) {
-            throw new APIError_1.APIError(http_status_1.default.UNAUTHORIZED, "Unauthorization Access!");
+            throw new APIError_1.APIError(http_status_1.default.UNAUTHORIZED, "Authenticaiton Required!");
         }
         // Access Token Verificaiton
         const user = jwtHelper_1.jwtHelper.verifyToken(token, config_1.default.JWT_SECRET);
         // Role Authorization
         if (requiredRoles.length && !requiredRoles.includes(user.role)) {
-            throw new APIError_1.APIError(http_status_1.default.BAD_REQUEST, "Authenticaiton Required!");
+            throw new APIError_1.APIError(http_status_1.default.BAD_REQUEST, "Unauthorization Access!");
         }
         req.user = user;
         next();
